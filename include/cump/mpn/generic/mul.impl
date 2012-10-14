@@ -1,0 +1,44 @@
+/* mpn::mul -- Multiply two natural numbers.
+
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.  */
+
+
+/* Multiply the natural numbers u (pointed to by UP, with UN limbs) and v
+   (pointed to by VP, with VN limbs), and store the result at PRODP.  The
+   result is UN + VN limbs.  Return the most significant limb of the result.
+
+   NOTE: The space pointed to by PRODP is overwritten before finished with U
+   and V, so overlap is an error.
+
+   Argument constraints:
+   1. UN >= VN.
+   2. PRODP != UP and PRODP != VP, i.e. the destination must be distinct from
+      the multiplier and the multiplicand.  */
+
+CUMP_FUNCTMPL3
+mp_limb_t  mul (mp_ptr(1)  prodp, mp_srcptr(2)  up, mp_size_t  un, mp_srcptr(3)  vp, mp_size_t  vn)
+{
+  ASSERT (un >= vn);
+  ASSERT (vn >= 1);
+  ASSERT (! CUMPN_OVERLAP_P (prodp, un+vn, up, un));
+  ASSERT (! CUMPN_OVERLAP_P (prodp, un+vn, vp, vn));
+
+  mul_basecase (prodp, up, un, vp, vn);
+
+  return  prodp [un + vn - 1];	/* historic */
+}  // mul ()

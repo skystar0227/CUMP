@@ -1,0 +1,97 @@
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.
+
+
+
+
+
+
+			THE CUMP LIBRARY
+
+
+CUMP [1] is a library for arbitrary precision arithmetic on CUDA [2],
+operating on floating point numbers.  It is based on the GNU MP library
+(GMP) [3], and its functions have a GMP-like regular interface.
+
+CUMP is designed to be faster on NVIDIA GF100/GF110 GPUs than the GARPREC
+library [4].  The performance advantage is achieved by using 64-bit fullwords
+as the basic arithmetic type, by using a register blocking technique, and by
+using "little endian" word order format.
+
+CUMP is free software and may be freely copied on the terms contained in the
+files COPYING.LIB and COPYING (most of CUMP is under the former, some under
+the latter).
+
+
+
+			OVERVIEW OF CUMP
+
+
+CUMP can be a substitute of GMP if arbitrary-precision floating-point
+arithmetic is necessary in CUDA.  There are functions for host codes and
+for device codes in CUMP.
+
+Functions for HOST codes:
+  "Host code" means a code operating on CPUs.  These functions are C language
+  functions.  Most of them belongs to the cumpf and cumpf_array class
+  equivalent to the mpf class in GMP.  Some which communicate with GMP's
+  `mpf_t' variables belong to the mpf class.
+
+Functions for DEVICE codes:
+  "Device code" means a code operating on GPUs.  These functions are CUDA
+  language functions which have the __device__ qualifier.  Since all of them
+  is in cump namespace (C++), in GPU kernels with "using namespace cump;",
+  it is possible to use CUMP functions which have the same name with GMP.
+
+If you want to use CUMP instead of GMP in your CUDA applications, write CUDA
+codes roughly (don't consider cudaMemcpy), assuming that GMP operates on CUDA
+at first.  In your host codes, declare your variables as `cumpf_t' instead of
+`mpf_t' and `cumpf_array_t' instead of `mpf_t[]', and call the functions in
+the cumpf or cumpf_array class instead of the functions in the mpf class.
+In your device codes, declare parameters of your GPU kernels as `cump::mpf_t'
+instead of `mpf_t' and `cump::mpf_array_t' instead of `mpf_t[]', and write
+"using namespace cump;" to the beginning of your GPU kernels.
+
+CUMP has a lack of functions and a lot of limitations compared with GMP.
+For more information on how to use CUMP, please refer to the documentation.
+(Sorry, the documentation is under writing. Please wait for a moment.)
+
+
+
+			REPORTING BUGS
+
+If you find a bug in the library, please tell me about it.
+Also welcome your questions and suggestions.
+
+
+
+			REFERENCE
+
+
+1. T. Nakayama and D. Takahashi: Implementation of Multiple-
+   Precision Floating-Point Arithmetic Library for GPU Computing, Proc. 23rd
+   IASTED International Conference on Parallel and Distributed Computing and
+   Systems (PDCS 2011), pp. 343--349 (2011).
+
+2. NVIDIA Corporation: CUDA, http://www.nvidia.com/object/cuda_home_new.html
+
+3. T. Granlund: GMP: The GNU Multiple Precision Arithmetic Library,
+   http://gmplib.org/
+
+4. M. Lu, B. He and Q. Luo: Supporting Extended Precision on Graphics
+   Processors, Proc. Sixth International Workshop on Data Management on New
+   Hardware (DaMoN 2010), pp. 19--26 (2010)

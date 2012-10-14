@@ -1,0 +1,24 @@
+Copyright 2012 Takatoshi Nakayama.
+
+Verbatim copying and distribution of this entire article is permitted in any
+medium, provided this notice is preserved.
+
+
+Changes between CUMP version 1.0.0 and 1.0.1
+
+  BUGS FIXED
+  * A bug in the configure.ac causing an installation fault has been fixed.
+
+  SPEEDUPS
+  * None.
+
+  FEATURES
+  * A demo code added.
+  * Default compilation targets have been changed to architectures with
+    Compute Capability 2.0.
+
+  MISC
+  * Makefile.am and */Makefile.am have been modified slightly.
+
+
+First release of CUMP vesion 1.0.0

@@ -1,0 +1,32 @@
+/* mpn::add_1 -- add limb to mpn.
+
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.  */
+
+
+namespace _add_1
+{
+CUMP_FUNCTYPE  mp_limb_t  op (mp_limb_t  x, mp_limb_t  y)  {return  x + y;}
+CUMP_FUNCTYPE  bool  cb (mp_limb_t  r, mp_limb_t  x, mp_limb_t  y)  {return  r < y;}
+}  // namespace _add_1
+
+
+CUMP_FUNCTMPL2  mp_limb_t  add_1 (mp_ptr(1)  dst, mp_srcptr(2)  src, mp_size_t  size, mp_limb_t  n)
+__CUMP_NOTHROW
+{
+  return  aors_1 <_add_1::op, _add_1::cb> (dst, src, size, n);
+}  // add_1 ()

@@ -1,0 +1,53 @@
+/* mpn::mul_1 -- Multiply a limb vector with a single limb and store the
+   product in a second limb vector.
+
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.  */
+
+
+#include "../../longlong.cuh"
+
+
+#if CUMP_NAIL_BITS == 0
+
+CUMP_FUNCTMPL2  mp_limb_t  mul_1 (mp_ptr(1)  rp, mp_srcptr(2)  up, mp_size_t  n, mp_limb_t  vl)
+{
+  mp_limb_t  ul, cl, hpl, lpl;
+
+  ASSERT (n >= 1);
+  ASSERT (CUMPN_SAME_OR_INCR_P (rp, up, n));
+
+  cl = 0;
+  do
+    {
+      ul = *up++;
+      umul_ppmm (hpl, lpl, ul, vl);
+
+      lpl += cl;
+      cl = (lpl < cl) + hpl;
+
+      *rp++ = lpl;
+    }
+  while (--n != 0);
+
+  return  cl;
+}  // mul_1 ()
+
+#endif
+
+#if CUMP_NAIL_BITS >= 1
+#endif

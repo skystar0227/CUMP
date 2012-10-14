@@ -1,0 +1,69 @@
+/* mpn::mul_2 -- Multiply an n-limb vector with a 2-limb vector and
+   store the result in a third limb vector.
+
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.  */
+
+
+#include "../../longlong.cuh"
+
+
+#if CUMP_NAIL_BITS == 0
+
+CUMP_FUNCTMPL3
+mp_limb_t  mul_2 (mp_ptr(1)  rp, mp_srcptr(2)  up, mp_size_t  n, mp_srcptr(3)  vp)
+{
+  mp_limb_t  vl0, vl1;
+  mp_limb_t  ul, cl0, cl1, hpl, lpl;
+
+  ASSERT (n >= 1);
+  ASSERT (CUMPN_SAME_OR_INCR_P (rp, up, n));
+
+  vl0 = vp [0];
+  cl0 = 0;
+  vl1 = vp [1];
+  cl1 = 0;
+  do
+    {
+      ul = *up++;
+      umul_ppmm (hpl, lpl, ul, vl0);
+
+      lpl += cl0;
+      cl0 = (lpl < cl0) + hpl;
+
+      *rp++ = lpl;
+
+      umul_ppmm (hpl, lpl, ul, vl1);
+
+      lpl += cl1;
+      cl1 = (lpl < cl1) + hpl;
+
+      lpl += cl0;
+      cl1 += lpl < cl0;
+      cl0 = lpl;
+    }
+  while (--n != 0);
+
+  *rp = cl0;
+
+  return  cl1;
+}
+
+#endif
+
+#if CUMP_NAIL_BITS >= 1
+#endif

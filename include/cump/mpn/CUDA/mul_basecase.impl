@@ -1,0 +1,247 @@
+/* mpn::mul_basecase
+
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.  */
+
+
+CUMP_FUNCTMPL3
+void  mul_basecase
+( mp_ptr(1)  rp
+, mp_srcptr(2)  up, mp_size_t  un
+, mp_srcptr(3)  vp, mp_size_t  vn
+)
+{
+  ASSERT (un >= vn);
+  ASSERT (vn >= 1);
+  ASSERT (! CUMPN_OVERLAP_P (rp, un+vn, up, un));
+  ASSERT (! CUMPN_OVERLAP_P (rp, un+vn, vp, vn));
+
+  int  _first = 2, _second = 3;
+  int  b;
+
+  if (vn==1 || vn==3)
+    {
+      rp [un] = mul_1 (rp, up, un, vp [0]);
+      rp += 1, vp += 1, vn -= 1;
+    }
+  else
+    {
+      rp [un+1] = mul_2 (rp, up, un, vp);
+      rp += 2, vp += 2, vn -= 2;
+    }
+  if (vn==0)  {return;}
+
+  do
+    {
+      if (__all (vn<=5))
+        {
+          if (__any (vn==5))
+            {
+              if (__any (vn==4))
+                {
+                  if (__all (vn>=4))
+                    {
+                      _first = 1;
+                      _second = 4;
+                    }
+                  else
+                    {
+                      _second = 2;
+                      if (vn==5 || vn==3)  {goto  __1;}
+                    }
+                }
+            }
+          else
+          if (__all (vn==4))  {_second = 4;}
+          else
+          if (__any (vn==4))
+            {
+              if (__any (vn==3))
+                {
+                  _first = 1;
+                  if (__all (vn!=2))  {_second = 3;}
+                  else
+                    {
+                      _second = 2;
+                      if (vn==4)  {goto  __1;}
+                    }
+                }
+              else  {_second = 2;}
+            }
+          else
+          if (__any (vn==3))
+            {
+              if (__any (vn==2))
+                {
+                  _first = 1;
+                  _second = 2;
+                }
+              else  {_second = 3;}
+            }
+        else  {_second = 2;}
+        break;
+      }
+
+      while (__any (vn>9) && vn>=6)  {
+        rp [un + 4 - 1] = addmul<4> (rp, up, un, vp);
+        rp += 4, vp += 4, vn -= 4;
+      }
+
+      if (__any (vn==9))
+        {
+          if (b = __all (vn==9 || vn==6 || vn==3))  {_first = 3;}
+          else
+          if (__all (vn!=8))
+            {
+              if (vn<6 && vn!=4)  {break;}
+              goto  __4;
+            }
+          if (b ? (vn==9) : (vn>=6))
+            {
+              rp [un + 3 - 1] = addmul<3> (rp, up, un, vp);
+              rp += 3, vp += 3, vn -= 3;
+            }
+          if (b || (vn!=6 && vn!=4))  {break;}
+          goto  __1;
+        }
+      else
+      if (__all (vn==8))
+        {
+          _second = 4;
+          goto  __4;
+        }
+      else
+      if (__any (vn==8))
+        {
+          if (__all (vn!=7))
+            {
+              if (__all (vn!=4))
+                {
+                  if (vn<6)  {break;}
+                  goto  __3;
+                }
+              if (__all (vn!=5 && vn!=3))
+                {
+                  _second = 4;
+                  if (__any (vn==6 || vn==2))
+                    {
+                      if (vn!=8)  {break;}
+                      goto  __2;
+                    }
+                  goto  __4;
+                }
+            }
+          if (b = __all (vn!=6 && vn!=2))
+            {
+              _first = 3;
+              _second = 4;
+            }
+          if (vn==8 || vn==(b?5:6))
+            {
+              rp [un] = addmul_1 (rp, up, un, vp [0]);
+              rp += 1, vp += 1, vn -= 1;
+            }
+          if (b || vn<4)  {break;}
+          goto  __2;
+        }
+      else
+      if (__any (vn==7))
+        {
+          if (__all (vn!=6))
+            {
+              if (__all (vn!=5 && vn!=2))
+                {
+                  _first = 3;
+                  _second = 4;
+                  break;
+                }
+              if (vn<4)  {break;}
+              goto  __2;
+            }
+          if (b = __all (vn!=5 && vn!=2))  {_first = 3;}
+          else  {_second = 4;}
+          if  (vn==7 || (b ? (vn==4) : (vn==5||vn==3)))  {goto  __1;}
+          break;
+        }
+      else
+        {  // __any (vn==6)
+          if (__all (vn==6 || vn==3))  {_first = 3;}
+          else
+          if (__all (vn!=5 && vn!=3))  {_second = 4;}
+          else
+          if (vn==6 || vn==4)  {goto  __1;}
+          break;
+        }
+
+    __1:
+      rp [un] = addmul_1 (rp, up, un, vp [0]);
+      rp += 1, vp += 1, vn -= 1;
+      break;
+    __2:
+      rp [un + 2 - 1] = addmul<2> (rp, up, un, vp);
+      rp += 2, vp += 2, vn -= 2;
+      break;
+    __3:
+      rp [un + 3 - 1] = addmul<3> (rp, up, un, vp);
+      rp += 3, vp += 3, vn -= 3;
+      break;
+    __4:
+      rp [un + 4 - 1] = addmul<4> (rp, up, un, vp);
+      if (vn==4)  {return;}
+      rp += 4, vp += 4, vn -= 4;
+    }
+  while (0);
+
+  if (vn!=_second)
+    {
+      switch (_first)
+        {
+        case  1:
+          rp [un] = addmul_1 (rp, up, un, vp [0]);
+          if (vn==1)  {return;}
+          rp += 1, vp += 1, vn -= 1;
+          break;
+        case  2:
+          rp [un + 2 - 1] = addmul<2> (rp, up, un, vp);
+          if (vn==2)  {return;}
+          rp += 2, vp += 2, vn -= 2;
+          break;
+        case  3:
+          rp [un + 3 - 1] = addmul<3> (rp, up, un, vp);
+          if (vn==3)  {return;}
+          rp += 3, vp += 3, vn -= 3;
+          break;
+        default:
+          break;
+        }
+    }
+
+  switch (_second)
+    {
+    case  2:
+      rp [un + 2 - 1] = addmul<2> (rp, up, un, vp);
+      break;
+    case  3:
+      rp [un + 3 - 1] = addmul<3> (rp, up, un, vp);
+      break;
+    case  4:
+      rp [un + 4 - 1] = addmul<4> (rp, up, un, vp);
+      break;
+    default:
+      break;
+    }
+}

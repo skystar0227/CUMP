@@ -1,0 +1,25 @@
+2012-05-23  Takatoshi Nakayama  <nakayama@hpcs.cs.tsukuba.ac.jp>
+
+	* Version 1.0.1 released.
+
+2012-05-22  Takatoshi Nakayama  <nakayama@hpcs.cs.tsukuba.ac.jp>
+
+	* configure.ac: Enclose rvalues with double quotes.
+	* configure.ac (CUFLAGS): Add "-arch=sm_20" to its default value.
+
+	* Makefile.am: Change ".o" into ".$(OBJEXT)".
+	* cumpf/Makefile.am: Change ".o" into ".$(OBJEXT)".
+	* cumpf/Makefile.am: Add "SUFFIXES = .cu".
+
+	* Add a demo suite.
+	* configure.ac (AC_CONFIG_FILES): Add "demos/Makefile".
+	* Makefile.am (SUBDIRS): Add "demos".
+	* demos/axpy.cu: add a demo code.
+
+2012-05-19  Takatoshi Nakayama  <nakayama@hpcs.cs.tsukuba.ac.jp>
+
+	* configure.ac (USE_GMP, SPECIFY_GMP_DIR): Fix the conditional expressions.
+
+2012-03-31  Takatoshi Nakayama  <nakayama@hpcs.cs.tsukuba.ac.jp>
+
+	* Version 1.0.0 released.

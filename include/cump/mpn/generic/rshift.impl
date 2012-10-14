@@ -1,0 +1,57 @@
+/* mpn::rshift -- Shift right low level.
+
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.  */
+
+
+/* Shift U (pointed to by up and N limbs long) cnt bits to the right
+   and store the n least significant limbs of the result at rp.
+   The bits shifted out to the right are returned.
+
+   Argument constraints:
+   1. 0 < cnt < CUMP_NUMB_BITS.
+   2. If the result is to be written over the input, rp must be <= up.
+*/
+
+CUMP_FUNCTMPL2
+mp_limb_t  rshift (mp_ptr(1)  rp, mp_srcptr(2)  up, mp_size_t  n, unsigned int  cnt)
+{
+  mp_limb_t  high_limb, low_limb;
+  unsigned int  tnc;
+  mp_size_t  i;
+  mp_limb_t  retval;
+
+  ASSERT (n >= 1);
+  ASSERT (cnt >= 1);
+  ASSERT (cnt < CUMP_NUMB_BITS);
+  ASSERT (CUMPN_SAME_OR_INCR_P (rp, up, n));
+
+  tnc = CUMP_NUMB_BITS - cnt;
+  high_limb = *up++;
+  retval = (high_limb << tnc) & CUMP_NUMB_MASK;
+  low_limb = high_limb >> cnt;
+
+  for (i = n - 1; i != 0; i--)
+    {
+      high_limb = *up++;
+      *rp++ = low_limb | ((high_limb << tnc) & CUMP_NUMB_MASK);
+      low_limb = high_limb >> cnt;
+    }
+  *rp = low_limb;
+
+  return  retval;
+}  // rshift ()

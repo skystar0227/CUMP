@@ -1,0 +1,51 @@
+/* mpn::sub_n -- Subtract equal length limb vectors.
+
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.  */
+
+
+#if CUMP_NAIL_BITS == 0
+
+CUMP_FUNCTMPL3  mp_limb_t  sub_n (mp_ptr(1)  rp, mp_srcptr(2)  up, mp_srcptr(3)  vp, mp_size_t  n)
+{
+  mp_limb_t  ul, vl, sl, rl, cy, cy1, cy2;
+
+  ASSERT (n >= 1);
+  ASSERT (CUMPN_SAME_OR_INCR_P (rp, up, n));
+  ASSERT (CUMPN_SAME_OR_INCR_P (rp, vp, n));
+
+  cy = 0;
+  do
+    {
+      ul = *up++;
+      vl = *vp++;
+      sl = ul - vl;
+      cy1 = sl > ul;
+      rl = sl - cy;
+      cy2 = rl > sl;
+      cy = cy1 | cy2;
+      *rp++ = rl;
+    }
+  while (--n != 0);
+
+  return  cy;
+}  // sub_n ()
+
+#endif
+
+#if CUMP_NAIL_BITS >= 1
+#endif

@@ -1,0 +1,35 @@
+/* mpn::cmp -- Compare two low-level natural-number integers.
+
+Copyright 2012 Takatoshi Nakayama.
+
+This file is part of the CUMP Library.
+
+The CUMP Library is free software; you can redistribute it and/or modify
+it under the terms of the GNU Lesser General Public License as published by
+the Free Software Foundation; either version 3 of the License, or (at your
+option) any later version.
+
+The CUMP Library is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
+License for more details.
+
+You should have received a copy of the GNU Lesser General Public License
+along with the CUMP Library.  If not, see http://www.gnu.org/licenses/.  */
+
+
+CUMP_FUNCTMPL2  int  cmp (mp_srcptr(1)  xp, mp_srcptr(2)  yp, mp_size_t  size)
+__CUMP_NOTHROW
+{
+  // ASSERT (size>=0);
+  while (--size >= 0)
+    {
+      mp_limb_t  x = *--xp, y = *--yp;
+      if (x != y)
+        {
+          // Cannot use x - y, may overflow an "int"
+          return  (x>y ? 1 : -1);
+        }
+    }
+  return  0;
+}  // cmp ()
